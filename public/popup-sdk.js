@@ -1,6 +1,8 @@
 (function () {
   // Function to create and display the popup
   function createPopup(config) {
+    console.log('Creating popup with config:', config); // Add this for debugging
+
     // Create overlay
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
