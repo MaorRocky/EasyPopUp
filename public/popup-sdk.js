@@ -1,96 +1,99 @@
 (function () {
-  // Function to create and display the popup
-  function createPopup(config) {
-    console.log('✅ createPopup() is running with config:', config); // Debug log
-    if (!config) {
-      console.error('❌ No config provided!');
-      return;
+  function createToast(config) {
+    console.log('✅ createToast() is running with config:', config);
+
+    // Ensure container exists
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.style.position = 'fixed';
+      toastContainer.style.bottom = '20px';
+      toastContainer.style.right = '20px';
+      toastContainer.style.width = '320px';
+      toastContainer.style.display = 'flex';
+      toastContainer.style.flexDirection = 'column';
+      toastContainer.style.gap = '10px';
+      toastContainer.style.zIndex = '10000';
+      document.body.appendChild(toastContainer);
     }
 
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    overlay.style.zIndex = 9998;
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.justifyContent = 'space-between';
+    toast.style.backgroundColor = '#fff';
+    toast.style.boxShadow = '0px 4px 8px rgba(0,0,0,0.1)';
+    toast.style.borderRadius = '12px';
+    toast.style.padding = '12px';
+    toast.style.gap = '10px';
+    toast.style.fontFamily = 'Arial, sans-serif';
+    toast.style.animation = 'fadeIn 0.5s ease-in-out';
+    toast.style.position = 'relative';
 
-    // Create popup container
-    const popup = document.createElement('div');
-    popup.style.backgroundColor = '#fff';
-    popup.style.padding = '20px';
-    popup.style.borderRadius = '8px';
-    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-    popup.style.maxWidth = '500px';
-    popup.style.width = '100%';
-    popup.style.position = 'relative';
-    popup.style.zIndex = 9999;
-
-    // Create icon
+    // Icon
     if (config.icon) {
       const icon = document.createElement('img');
       icon.src = config.icon;
-      icon.alt = 'Popup Icon';
-      icon.style.width = '50px';
-      icon.style.height = '50px';
-      icon.style.display = 'block';
-      icon.style.margin = '0 auto 10px';
-      popup.appendChild(icon);
+      icon.style.width = '32px';
+      icon.style.height = '32px';
+      icon.style.borderRadius = '50%';
+      toast.appendChild(icon);
     }
 
-    // Create title
-    const title = document.createElement('h2');
-    title.innerText = config.title || 'Default Title';
-    title.style.margin = '0 0 10px';
-    title.style.textAlign = 'center';
-    popup.appendChild(title);
+    // Content container
+    const content = document.createElement('div');
+    content.style.flex = '1';
 
-    // Create body
+    // Title
+    const title = document.createElement('strong');
+    title.innerText = config.title || 'Notification';
+    content.appendChild(title);
+
+    // Body
     const body = document.createElement('p');
-    body.innerText = config.body || 'Default body content.';
-    body.style.margin = '0 0 20px';
-    body.style.textAlign = 'center';
-    popup.appendChild(body);
+    body.innerText = config.body || 'This is a toast notification.';
+    body.style.margin = '4px 0 0';
+    body.style.fontSize = '12px';
+    body.style.color = '#555';
+    content.appendChild(body);
 
-    // Create close button
-    const closeButton = document.createElement('button');
-    closeButton.innerText = 'Close';
-    closeButton.style.position = 'absolute';
-    closeButton.style.top = '10px';
-    closeButton.style.right = '10px';
-    closeButton.style.background = 'none';
-    closeButton.style.border = 'none';
-    closeButton.style.fontSize = '16px';
+    toast.appendChild(content);
+
+    // Close button
+    const closeButton = document.createElement('span');
+    closeButton.innerHTML = '&times;';
     closeButton.style.cursor = 'pointer';
+    closeButton.style.fontSize = '16px';
+    closeButton.style.fontWeight = 'bold';
     closeButton.onclick = () => {
-      document.body.removeChild(overlay);
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 500);
     };
-    popup.appendChild(closeButton);
+    toast.appendChild(closeButton);
 
-    // Append popup to overlay
-    overlay.appendChild(popup);
+    // Append to container
+    toastContainer.appendChild(toast);
 
-    // Append overlay to body
-    document.body.appendChild(overlay);
-
-    console.log('✅ Popup should now be visible in the DOM');
+    // Auto-dismiss
+    if (config.duration) {
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+      }, config.duration);
+    }
   }
 
   // Expose the init function globally
   window.PopupSDK = {
     init: function (config) {
-      console.log('✅ PopupSDK.init() called'); // Debug log
+      console.log('✅ PopupSDK.init() called');
       if (!config) {
         console.error('❌ PopupSDK.init() called without config!');
         return;
       }
-
-      createPopup(config);
+      createToast(config);
     },
   };
 })();
