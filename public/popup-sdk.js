@@ -1,7 +1,11 @@
 (function () {
   // Function to create and display the popup
   function createPopup(config) {
-    console.log('Creating popup with config:', config); // Add this for debugging
+    console.log('✅ createPopup() is running with config:', config); // Debug log
+    if (!config) {
+      console.error('❌ No config provided!');
+      return;
+    }
 
     // Create overlay
     const overlay = document.createElement('div');
@@ -74,23 +78,19 @@
     // Append overlay to body
     document.body.appendChild(overlay);
 
-    // Auto-close after specified duration
-    if (config.duration) {
-      setTimeout(() => {
-        if (document.body.contains(overlay)) {
-          document.body.removeChild(overlay);
-        }
-      }, config.duration);
-    }
+    console.log('✅ Popup should now be visible in the DOM');
   }
 
   // Expose the init function globally
   window.PopupSDK = {
     init: function (config) {
-      // Ensure the DOM is fully loaded
-      document.addEventListener('DOMContentLoaded', function () {
-        createPopup(config);
-      });
+      console.log('✅ PopupSDK.init() called'); // Debug log
+      if (!config) {
+        console.error('❌ PopupSDK.init() called without config!');
+        return;
+      }
+
+      createPopup(config);
     },
   };
 })();
