@@ -2,19 +2,33 @@
   function createToast(config) {
     console.log('✅ createToast() is running with config:', config);
 
+    // Determine the position (default: "bottom-right")
+    const position = config.position || 'bottom-right';
+
     // Ensure container exists
-    let toastContainer = document.getElementById('toast-container');
+    let toastContainer = document.getElementById('toast-container-' + position);
     if (!toastContainer) {
       toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
+      toastContainer.id = 'toast-container-' + position;
       toastContainer.style.position = 'fixed';
-      toastContainer.style.bottom = '20px';
-      toastContainer.style.right = '20px';
       toastContainer.style.width = '320px';
       toastContainer.style.display = 'flex';
       toastContainer.style.flexDirection = 'column';
       toastContainer.style.gap = '10px';
       toastContainer.style.zIndex = '10000';
+
+      // Apply position styles
+      if (position.includes('top')) {
+        toastContainer.style.top = '20px';
+      } else {
+        toastContainer.style.bottom = '20px';
+      }
+      if (position.includes('right')) {
+        toastContainer.style.right = '20px';
+      } else {
+        toastContainer.style.left = '20px';
+      }
+
       document.body.appendChild(toastContainer);
     }
 
@@ -74,7 +88,11 @@
     toast.appendChild(closeButton);
 
     // Append to container
-    toastContainer.appendChild(toast);
+    if (position.includes('top')) {
+      toastContainer.prepend(toast); // Newest toast at the top
+    } else {
+      toastContainer.appendChild(toast); // Newest toast at the bottom
+    }
 
     // Auto-dismiss
     if (config.duration) {
